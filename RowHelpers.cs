@@ -12,12 +12,13 @@ namespace MondayMaster
         }
 
         public static T GetValue<T>(this IXLRow row, string columnLetter) => row.Cell(columnLetter).GetValue<T>();
+
         public static bool TryGetValue<T>(this IXLRow row, string columnLetter, out T value)
         {
             return row.Cell(columnLetter)
                       .TryGetValue<T>(out value);
-
         }
+
         public static UpdateRecord ToUpdateRecord(this IXLRow row, string header, System.Collections.Generic.IDictionary<string, string> comments)
         {
             var name = row.GetValue<string>("A");
@@ -31,7 +32,6 @@ namespace MondayMaster
 
             if (name == "Name" && health == "Health" && teams == "Teams") return null;
             if (string.IsNullOrEmpty(name)) return null;
-
 
             comments.TryGetValue(id, out string comment);
 
@@ -64,4 +64,3 @@ namespace MondayMaster
         public static string GetHeader(this IXLRow row) => row.Cell(1).GetValue<string>();
     }
 }
-

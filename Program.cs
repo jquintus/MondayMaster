@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace MondayMaster
 {
-    class Program
+    internal class Program
     {
         private static void Main(string[] args)
         {
@@ -15,7 +15,5 @@ namespace MondayMaster
             }
             DocGenerator.GenerateDoc(records);
         }
-
     }
 }
-

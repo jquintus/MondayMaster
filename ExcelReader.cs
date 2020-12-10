@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MondayMaster
 {
-
     public static class ExcelReader
     {
-        class Comment
+        private class Comment
         {
             public Comment(IXLRow r)
             {
@@ -20,7 +18,6 @@ namespace MondayMaster
 
                 IsValid = r.TryGetValue("F", out created);
                 Created = created;
-
 
                 if (string.IsNullOrEmpty(Id)) IsValid = false;
             }
@@ -49,7 +46,6 @@ namespace MondayMaster
 
         public static IEnumerable<UpdateRecord> ReadData()
         {
-
             string fileName = $"C:\\Users\\jq\\source\\test\\input.xlsx";
             using (var workbook = new XLWorkbook(fileName))
             {
@@ -59,6 +55,7 @@ namespace MondayMaster
                 return updates;
             }
         }
+
         private static IEnumerable<UpdateRecord> ReadUpdates(XLWorkbook workbook, IDictionary<string, string> comments)
         {
             var currentHeader = string.Empty;
@@ -79,12 +76,9 @@ namespace MondayMaster
 
                     if (record != null) yield return record;
                 }
-
             }
 
             Console.WriteLine("Done processing file");
         }
-
     }
 }
-

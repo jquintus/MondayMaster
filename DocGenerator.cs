@@ -25,14 +25,13 @@ namespace MondayMaster
             Process.Start("WINWORD.EXE", fileName);
         }
 
-
         private static void AddTable(DocX doc, List<UpdateRecord> records)
         {
             Table t = doc.AddTable(records.Count(), 4);
             t.Alignment = Alignment.center;
             t.Design = TableDesign.ColorfulList;
 
-            //Fill cells by adding text.  
+            //Fill cells by adding text.
             t.Rows[0].Cells[0].Paragraphs.First().Append("Stage");
             t.Rows[0].Cells[1].Paragraphs.First().Append("Name");
             t.Rows[0].Cells[2].Paragraphs.First().Append("Health");
@@ -52,4 +51,3 @@ namespace MondayMaster
         }
     }
 }
-

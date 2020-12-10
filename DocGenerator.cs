@@ -16,19 +16,62 @@ namespace MondayMaster
 
             using (var doc = DocX.Create(fileName))
             {
-                var groups = records.GroupBy(r => r.Header);
-
-                foreach (var group in groups)
-                {
-                    var header = doc.InsertParagraph(group.Key);
-                    header.Heading(HeadingType.Heading2);
-                    AddTable(doc, group.ToList());
-                }
+                InsertPreamble(doc);
+                InsertTable(doc, records);
+                InsertMetrics(doc);
 
                 doc.Save();
             }
 
             Process.Start("WINWORD.EXE", fileName);
+        }
+
+        private static void InsertMetrics(DocX doc)
+        {
+            doc.InsertParagraph("Key Metrics").AsH2();
+            doc.InsertParagraph("See full metrics over at the Integrations adoption dashboard.");
+
+            doc.InsertParagraph("");
+
+            doc.InsertParagraph("*Adoption is calculated by total installs divided by total customers reporting the vendor in Salesforce. Since Salesforce data is manually updated, there can be some data quality issues.");
+        }
+
+        private static void InsertPreamble(DocX doc)
+        {
+            doc.InsertParagraph(DateTime.Now.ToString("MM/d")).AsH1();
+            doc.InsertParagraph("Hey there everyone!\r\n");
+            doc.InsertParagraph("See below for the Integrations Team weekly update! Let us know if you have any questions!\r\n");
+            doc.InsertParagraph("All the best, \r\nThe Integrations Team\r\n");
+
+            doc.InsertParagraph("Week in Review").AsH2();
+
+            doc.InsertParagraph("Integration Core").AsH3();
+            doc.InsertParagraph("Highlights").AsH4();
+            doc.InsertParagraph("*");
+            doc.InsertParagraph("Lowlights").AsH4();
+            doc.InsertParagraph("*");
+            doc.InsertParagraph("What is preventing your team from doing their best work?").AsH4();
+
+            doc.InsertParagraph("Integration Apps").AsH3();
+            doc.InsertParagraph("Highlights").AsH4();
+            doc.InsertParagraph("*");
+            doc.InsertParagraph("Lowlights").AsH4();
+            doc.InsertParagraph("*");
+            doc.InsertParagraph("What is preventing your team from doing their best work?").AsH4();
+
+            doc.InsertParagraph("Weekly Update").AsH2();
+        }
+
+        private static void InsertTable(DocX doc, List<UpdateRecord> records)
+        {
+            var groups = records.GroupBy(r => r.Header);
+
+            foreach (var group in groups)
+            {
+                var header = doc.InsertParagraph(group.Key);
+                header.Heading(HeadingType.Heading2);
+                AddTable(doc, group.ToList());
+            }
         }
 
         private static void AddTable(DocX doc, List<UpdateRecord> records)

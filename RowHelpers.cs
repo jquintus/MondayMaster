@@ -1,10 +1,23 @@
 ﻿using ClosedXML.Excel;
+using System;
 using System.Linq;
 
 namespace MondayMaster
 {
     public static class RowHelpers
     {
+        public static DateTime? TryToDateTime(this string date)
+        {
+            if (DateTime.TryParse(date, out DateTime result))
+            {
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static bool IgnoreRow(this IXLRow row)
         {
             if (row == null) return true;
@@ -42,6 +55,10 @@ namespace MondayMaster
                 Health = health,
                 Comment = comment,
                 Header = header,
+                ProductManager = pm,
+                LeadEng = leadEng,
+                ExitDateCurrent = exitCurrentStr.TryToDateTime(),
+                ExitDateOriginal = exitOriginalStr.TryToDateTime(),
             };
         }
 

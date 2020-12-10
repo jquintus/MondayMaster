@@ -14,37 +14,60 @@ namespace MondayMaster
             var stamp = DateTime.Now.ToString("yy-MM-dd-HH-mm-ss");
             string fileName = $"C:\\Users\\jq\\source\\test\\out_{stamp}.docx";
 
-            var doc = DocX.Create(fileName);
+            using (var doc = DocX.Create(fileName))
+            {
+                var groups = records.GroupBy(r => r.Header);
 
-            doc.InsertParagraph("Hello Word");
+                foreach (var group in groups)
+                {
+                    var header = doc.InsertParagraph(group.Key);
+                    header.Heading(HeadingType.Heading2);
+                    AddTable(doc, group.ToList());
+                }
 
-            AddTable(doc, records);
-
-            doc.Save();
+                doc.Save();
+            }
 
             Process.Start("WINWORD.EXE", fileName);
         }
 
         private static void AddTable(DocX doc, List<UpdateRecord> records)
         {
-            Table t = doc.AddTable(records.Count(), 4);
-            t.Alignment = Alignment.center;
-            t.Design = TableDesign.ColorfulList;
+            Table t = doc.AddTable(records.Count() + 1, 5);
+            t.Alignment = Alignment.left;
+            t.Design = TableDesign.ColorfulListAccent2;
 
-            //Fill cells by adding text.
-            t.Rows[0].Cells[0].Paragraphs.First().Append("Stage");
-            t.Rows[0].Cells[1].Paragraphs.First().Append("Name");
-            t.Rows[0].Cells[2].Paragraphs.First().Append("Health");
-            t.Rows[0].Cells[3].Paragraphs.First().Append("Update");
+            Console.WriteLine(t.GetColumnWidth(0));
+            Console.WriteLine(t.GetColumnWidth(1));
+            Console.WriteLine(t.GetColumnWidth(2));
+            Console.WriteLine(t.GetColumnWidth(3));
+            Console.WriteLine(t.GetColumnWidth(4));
 
-            for (int i = 1; i < records.Count; i++)
+            t.SetColumnWidth(0, 90);
+            t.SetColumnWidth(1, 70);
+            t.SetColumnWidth(2, 70);
+            t.SetColumnWidth(3, 70);
+            t.SetColumnWidth(4, 240);
+
+            int c = 0;
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Name");
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Health");
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date (original)");
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date (current)");
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Comment");
+
+            for (int i = 1; i <= records.Count; i++)
             {
-                var record = records[i];
+                var record = records[i-1];
+                c = 0;
 
-                t.Rows[i].Cells[0].Paragraphs.First().Append(record.Header);
-                t.Rows[i].Cells[1].Paragraphs.First().Append(record.Name);
-                t.Rows[i].Cells[2].Paragraphs.First().Append(record.Health);
-                t.Rows[i].Cells[3].Paragraphs.First().Append(record.Comment);
+                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Name);
+                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Health).FormatHealth();
+                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.ExitDateOriginal.FormatDate());
+                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.ExitDateCurrent.FormatDate());
+
+                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Comment);
+
             }
 
             doc.InsertTable(t);

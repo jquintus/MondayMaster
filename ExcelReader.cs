@@ -11,12 +11,10 @@ namespace MondayMaster
         {
             public Comment(IXLRow r)
             {
-                DateTime created;
-
                 Id = r.GetValue<string>("A");
                 Text = r.GetValue<string>("G");
 
-                IsValid = r.TryGetValue("F", out created);
+                IsValid = r.TryGetValue("F", out DateTime created);
                 Created = created;
 
                 if (string.IsNullOrEmpty(Id)) IsValid = false;
@@ -52,6 +50,8 @@ namespace MondayMaster
                 var comments = ReadComments(workbook);
                 var updates = ReadUpdates(workbook, comments).ToList();
 
+                Console.WriteLine("Done processing file");
+
                 return updates;
             }
         }
@@ -77,8 +77,6 @@ namespace MondayMaster
                     if (record != null) yield return record;
                 }
             }
-
-            Console.WriteLine("Done processing file");
         }
     }
 }

@@ -13,6 +13,12 @@ namespace MondayMaster
                 : "";
         }
 
+        public static List AddBulletedList(this Document doc, string itemText = "")
+        {
+            var list = doc.AddList(itemText, 0, ListItemType.Bulleted);
+            return doc.InsertList(list);
+        }
+
         public static Paragraph AsH1(this Paragraph paragraph) => paragraph.Heading(HeadingType.Heading1);
 
         public static Paragraph AsH2(this Paragraph paragraph) => paragraph.Heading(HeadingType.Heading2);

@@ -47,16 +47,17 @@ namespace MondayMaster
 
             doc.InsertParagraph("Integration Core").AsH3();
             doc.InsertParagraph("Highlights").AsH4();
-            doc.InsertParagraph("*");
+            doc.AddBulletedList();
+
             doc.InsertParagraph("Lowlights").AsH4();
-            doc.InsertParagraph("*");
+            doc.AddBulletedList();
             doc.InsertParagraph("What is preventing your team from doing their best work?").AsH4();
 
             doc.InsertParagraph("Integration Apps").AsH3();
             doc.InsertParagraph("Highlights").AsH4();
-            doc.InsertParagraph("*");
+            doc.AddBulletedList();
             doc.InsertParagraph("Lowlights").AsH4();
-            doc.InsertParagraph("*");
+            doc.AddBulletedList();
             doc.InsertParagraph("What is preventing your team from doing their best work?").AsH4();
 
             doc.InsertParagraph("Weekly Update").AsH2();
@@ -88,21 +89,19 @@ namespace MondayMaster
 
         private static void AddTable(DocX doc, List<UpdateRecord> records, TableDesign td)
         {
-            Table t = doc.AddTable(1, 5);
+            Table t = doc.AddTable(1, 4);
             t.Alignment = Alignment.left;
             t.Design = td;
 
             t.SetColumnWidth(0, 90);
             t.SetColumnWidth(1, 70);
             t.SetColumnWidth(2, 70);
-            t.SetColumnWidth(3, 70);
-            t.SetColumnWidth(4, 240);
+            t.SetColumnWidth(3, 310);
 
             int c = 0;
             t.Rows[0].Cells[c++].Paragraphs.First().Append("Name");
             t.Rows[0].Cells[c++].Paragraphs.First().Append("Health");
-            t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date (original)");
-            t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date (current)");
+            t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date\r\nOriginal\r\nCurrent");
             t.Rows[0].Cells[c++].Paragraphs.First().Append("Comment");
 
             foreach (var record in records)
@@ -112,8 +111,11 @@ namespace MondayMaster
 
                 row.Cells[c++].Paragraphs.First().Append(record.Name);
                 row.Cells[c++].Paragraphs.First().Append(record.Health).FormatHealth();
-                row.Cells[c++].Paragraphs.First().Append(record.ExitDateOriginal.FormatDate());
-                row.Cells[c++].Paragraphs.First().Append(record.ExitDateCurrent.FormatDate());
+                row.Cells[c++].Paragraphs.First()
+                    .Append(record.ExitDateOriginal.FormatDate())
+                    .Append(System.Environment.NewLine)
+                    .Append(System.Environment.NewLine)
+                    .Append(record.ExitDateCurrent.FormatDate());
 
                 row.Cells[c++].Paragraphs.First().Append(record.Comment);
             }

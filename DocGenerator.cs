@@ -33,15 +33,21 @@ namespace MondayMaster
 
         private static void AddTable(DocX doc, List<UpdateRecord> records)
         {
-            Table t = doc.AddTable(records.Count() + 1, 5);
-            t.Alignment = Alignment.left;
-            t.Design = TableDesign.ColorfulListAccent2;
+            //foreach (TableDesign td in Enum.GetValues(typeof(TableDesign)))
+            //{
+            //    var header = doc.InsertParagraph(td.ToString());
+            //    header.Heading(HeadingType.Heading2);
+            //    AddTable(doc, records, td);
+            //}
 
-            Console.WriteLine(t.GetColumnWidth(0));
-            Console.WriteLine(t.GetColumnWidth(1));
-            Console.WriteLine(t.GetColumnWidth(2));
-            Console.WriteLine(t.GetColumnWidth(3));
-            Console.WriteLine(t.GetColumnWidth(4));
+            AddTable(doc, records, TableDesign.LightGridAccent1);
+        }
+
+        private static void AddTable(DocX doc, List<UpdateRecord> records, TableDesign td)
+        {
+            Table t = doc.AddTable(1, 5);
+            t.Alignment = Alignment.left;
+            t.Design = td;
 
             t.SetColumnWidth(0, 90);
             t.SetColumnWidth(1, 70);
@@ -56,18 +62,17 @@ namespace MondayMaster
             t.Rows[0].Cells[c++].Paragraphs.First().Append("Exit Date (current)");
             t.Rows[0].Cells[c++].Paragraphs.First().Append("Comment");
 
-            for (int i = 1; i <= records.Count; i++)
+            foreach (var record in records)
             {
-                var record = records[i-1];
+                var row = t.InsertRow();
                 c = 0;
 
-                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Name);
-                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Health).FormatHealth();
-                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.ExitDateOriginal.FormatDate());
-                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.ExitDateCurrent.FormatDate());
+                row.Cells[c++].Paragraphs.First().Append(record.Name);
+                row.Cells[c++].Paragraphs.First().Append(record.Health).FormatHealth();
+                row.Cells[c++].Paragraphs.First().Append(record.ExitDateOriginal.FormatDate());
+                row.Cells[c++].Paragraphs.First().Append(record.ExitDateCurrent.FormatDate());
 
-                t.Rows[i].Cells[c++].Paragraphs.First().Append(record.Comment);
-
+                row.Cells[c++].Paragraphs.First().Append(record.Comment);
             }
 
             doc.InsertTable(t);
